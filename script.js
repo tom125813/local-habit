@@ -54,15 +54,41 @@ function getGreeting() {
     return 'Welcome back';
 }
 
-function updateGreeting() {
+function updateGreeting() { // added date to this too
     document.getElementById('greetingText').textContent = getGreeting();
     const nameEl = document.getElementById('nameDisplay');
     if (state.name) {
         nameEl.textContent = state.name;
         nameEl.style.color = '';
+        nameEl.style.fontWeight = '600';
     } else {
         nameEl.textContent = 'friend';
         nameEl.style.color = '#999';
+    }
+
+    document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString(undefined, {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    document.getElementById('dateDisplay').style.color = '#666';
+    document.getElementById('dateDisplay').style.fontSize = '0.9em';
+    // weight bold
+    document.getElementById('dateDisplay').style.fontWeight = '100';
+    document.getElementById('dateDisplay').style.float = "right";
+
+
+    const itsText = document.getElementById('dateDisplay');
+    // on desktop: margin left 20px margin right 5px on mobile display block not inline
+    if (window.innerWidth >= 768) {
+        itsText.style.display = 'inline';
+        itsText.style.marginLeft = '20px';
+        itsText.style.marginRight = '5px';
+    } else {
+        itsText.style.display = 'block';
+        itsText.style.marginLeft = '0px';
+        itsText.style.marginRight = '0px';
     }
 }
 
