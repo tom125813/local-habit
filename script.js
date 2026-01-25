@@ -46,6 +46,7 @@ function saveData() {
     }
 }
 
+
 function getGreeting() {
     const hour = new Date().getHours();
     if (hour < 12) return 'Good morning';
@@ -89,6 +90,7 @@ function updateGreeting() { // added date to this too
         itsText.style.display = 'block';
         itsText.style.marginLeft = '0px';
         itsText.style.marginRight = '0px';
+
     }
 }
 
@@ -690,6 +692,8 @@ function init() {
     }
 
     updateGreeting();
+    setInterval(updateGreeting, 1000 * 60 * 5); // Update greeting every 5 minutes
+
     renderHabits();
 
     document.getElementById('nameDisplay').addEventListener('click', makeNameEditable);
