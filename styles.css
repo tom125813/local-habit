@@ -358,7 +358,7 @@ strong {
   font-size: 0.7rem;
   white-space: nowrap;
   pointer-events: none;
-  z-index: 10000;
+  z-index: 20000;
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
@@ -380,6 +380,7 @@ strong {
   transform: translateX(-50%);
   border: 5px solid transparent;
   border-top-color: #000;
+  z-index: 20000;
 }
 
 .day:hover .day-tooltip {
@@ -884,7 +885,9 @@ strong {
 
 /* Tooltip overflow fix */
 .day {
+
   overflow: visible;
+  z-index: 0;
 }
 
 .day-tooltip {

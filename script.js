@@ -265,7 +265,8 @@ function interpolateColor(color, value, max) {
     const b = parseInt(color.slice(5, 7), 16);
 
     // originally was ratio = value / max but changed to have a min base ratio of 0.15 for better visibility
-    const ratio = 0.15+Math.min(0.85, value / max);
+    const ratio =  0.15+Math.min(0.85, value / max);
+    //const ratio = value / max;
     const nr = Math.round(245 + (r - 245) * ratio);
     const ng = Math.round(245 + (g - 245) * ratio);
     const nb = Math.round(245 + (b - 245) * ratio);
@@ -336,26 +337,32 @@ function renderCalendar(habit, year, container) {
                     openDayModal(habit, capturedDate);
                 });
 
-                // Smart tooltip positioning
                 dayEl.addEventListener('mouseenter', () => {
-                    const rect = dayEl.getBoundingClientRect();
+                    const dayRect = dayEl.getBoundingClientRect();
+                    const gridRect = grid.getBoundingClientRect();
                     const viewportWidth = window.innerWidth;
 
-                    // Reset all positioning classes
+                    // Y position relative to the calendar grid
+                    const yInGrid = dayRect.top - gridRect.top;
+                    const xInGrid = dayRect.left - gridRect.left;
+
+                    // Reset classes
                     tooltip.classList.remove('tooltip-below', 'tooltip-left', 'tooltip-right');
 
-                    // Check if tooltip should appear below (if day is in top 120px of viewport)
-                    if (rect.top < 120) {
+                    // Example threshold INSIDE the grid (not viewport)
+                    if (yInGrid < 50) {
                         tooltip.classList.add('tooltip-below');
                     }
 
-                    // Check horizontal positioning
-                    if (rect.left < 120) {
+                    const gridWidth = gridRect.width;
+                    // Horizontal logic (grid-based)
+                    if (xInGrid < 80) {
                         tooltip.classList.add('tooltip-left');
-                    } else if (rect.right > viewportWidth - 120) {
+                    } else if (xInGrid > gridWidth - 210) {
                         tooltip.classList.add('tooltip-right');
                     }
                 });
+
             }
 
             grid.appendChild(dayEl);
@@ -440,6 +447,8 @@ function updateDayValue(delta) {
 function renderHabit(habit) {
     const card = document.createElement('div');
     card.className = 'habit-card';
+    // set id
+    card.id = `habit-card`;
 
     // Make draggable
     makeDraggable(card, habit);
