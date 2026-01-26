@@ -264,7 +264,7 @@ function interpolateColor(color, value, max) {
     const g = parseInt(color.slice(3, 5), 16);
     const b = parseInt(color.slice(5, 7), 16);
 
-    const ratio = Math.max(0.35, value / max);
+    const ratio = 0.35+Math.min(0.75, value / max);
     const nr = Math.round(245 + (r - 245) * ratio);
     const ng = Math.round(245 + (g - 245) * ratio);
     const nb = Math.round(245 + (b - 245) * ratio);
