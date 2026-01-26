@@ -67,31 +67,17 @@ function updateGreeting() { // added date to this too
         nameEl.style.color = '#999';
     }
 
-    document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString(undefined, {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+    const now = new Date();
+    
+    document.getElementById('dayOfWeek').textContent = now.toLocaleDateString(undefined, {
+        weekday: 'long'
     });
-    document.getElementById('dateDisplay').style.color = '#666';
-    document.getElementById('dateDisplay').style.fontSize = '0.9em';
-    // weight bold
-    document.getElementById('dateDisplay').style.fontWeight = '100';
-    document.getElementById('dateDisplay').style.float = "right";
-
-
-    const itsText = document.getElementById('dateDisplay');
-    // on desktop: margin left 20px margin right 5px on mobile display block not inline
-    if (window.innerWidth >= 768) {
-        itsText.style.display = 'inline';
-        itsText.style.marginLeft = '20px';
-        itsText.style.marginRight = '5px';
-    } else {
-        itsText.style.display = 'block';
-        itsText.style.marginLeft = '0px';
-        itsText.style.marginRight = '0px';
-
-    }
+    
+    document.getElementById('dateDisplay').textContent = now.toLocaleDateString(undefined, {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+    });
 }
 
 function makeNameEditable() {
@@ -118,6 +104,36 @@ function makeNameEditable() {
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') input.blur();
     });
+}
+
+function calculateCurrentStreak(habitId, year) {
+    const habitData = state.data[habitId] || {};
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    
+    // Only calculate streak for current year
+    if (year !== currentYear) {
+        return 0;
+    }
+    
+    let streak = 0;
+    let checkDate = new Date(today);
+    
+    // Count consecutive days backwards from today
+    while (checkDate.getFullYear() === currentYear) {
+        const dateKey = dateToKey(checkDate);
+        const value = habitData[dateKey] || 0;
+        
+        if (value > 0) {
+            streak++;
+        } else {
+            break;
+        }
+        
+        checkDate.setDate(checkDate.getDate() - 1);
+    }
+    
+    return streak;
 }
 
 function dateToKey(date) {
@@ -193,7 +209,11 @@ function makeHabitTitleEditable(habit, titleElement) {
         saveData();
         const newTitle = document.createElement('div');
         newTitle.className = 'habit-title';
-        newTitle.textContent = habit.name;
+        
+        // Preserve the icon when recreating the title
+        const iconHtml = habit.icon ? `<i class="${habit.icon}"></i> ` : '';
+        newTitle.innerHTML = iconHtml + habit.name;
+        
         newTitle.addEventListener('click', (e) => {
             e.stopPropagation();
             makeHabitTitleEditable(habit, newTitle);
@@ -287,6 +307,8 @@ function renderCalendar(habit, year, container) {
 
     const data = state.data[habit.id] || {};
     const maxVal = getMaxValue(habit.id, year);
+    const today = new Date();
+    const todayKey = dateToKey(today);
 
     const grid = document.createElement('div');
     grid.className = 'calendar-grid';
@@ -308,6 +330,7 @@ function renderCalendar(habit, year, container) {
             const isCurrentYear = currentDate.getFullYear() === year;
             const monthIndex = currentDate.getMonth();
             const isAlternateMonth = monthIndex % 2 === 1;
+            const isToday = dateKey === todayKey && isCurrentYear;
 
             let color;
             if (isCurrentYear) {
@@ -319,6 +342,9 @@ function renderCalendar(habit, year, container) {
 
             const dayEl = document.createElement('div');
             dayEl.className = 'day';
+            if (isToday) {
+                dayEl.classList.add('today');
+            }
             dayEl.style.background = color;
             dayEl.style.opacity = isCurrentYear ? '1' : '0.3';
             dayEl.style.gridColumn = weekCount + 1;
@@ -330,7 +356,8 @@ function renderCalendar(habit, year, container) {
 
                 const tooltip = document.createElement('div');
                 tooltip.className = 'day-tooltip';
-                tooltip.innerHTML = `${formatDateTooltip(capturedDate)}<br><strong>Count: ${currentValue}</strong>`;
+                const unitText = habit.unit ? ` ${habit.unit}` : '';
+                tooltip.innerHTML = `${formatDateTooltip(capturedDate)}<br><strong>Count: ${currentValue}${unitText}</strong>`;
                 dayEl.appendChild(tooltip);
 
                 dayEl.addEventListener('click', () => {
@@ -340,7 +367,6 @@ function renderCalendar(habit, year, container) {
                 dayEl.addEventListener('mouseenter', () => {
                     const dayRect = dayEl.getBoundingClientRect();
                     const gridRect = grid.getBoundingClientRect();
-                    const viewportWidth = window.innerWidth;
 
                     // Y position relative to the calendar grid
                     const yInGrid = dayRect.top - gridRect.top;
@@ -392,6 +418,47 @@ function closeDayModal() {
     document.getElementById('dayModal').classList.add('hidden');
 }
 
+let currentHabitSettings = null;
+
+function openHabitSettingsModal(habit) {
+    currentHabitSettings = habit;
+
+    document.getElementById('habitSettingsName').value = habit.name || '';
+    document.getElementById('habitSettingsColor').value = habit.color || '#FFB5E8';
+    document.getElementById('habitSettingsUnit').value = habit.unit || '';
+    
+    // Set current icon
+    const currentIcon = habit.icon || 'fas fa-star';
+    document.querySelectorAll('.icon-option').forEach(option => {
+        option.classList.remove('selected');
+        if (option.dataset.icon === currentIcon) {
+            option.classList.add('selected');
+        }
+    });
+
+    document.getElementById('habitSettingsModal').classList.remove('hidden');
+}
+
+function closeHabitSettingsModal() {
+    currentHabitSettings = null;
+    document.getElementById('habitSettingsModal').classList.add('hidden');
+}
+
+function saveHabitSettings() {
+    if (!currentHabitSettings) return;
+
+    currentHabitSettings.name = document.getElementById('habitSettingsName').value || 'Untitled Habit';
+    currentHabitSettings.color = document.getElementById('habitSettingsColor').value;
+    currentHabitSettings.unit = document.getElementById('habitSettingsUnit').value;
+    
+    const selectedIcon = document.querySelector('.icon-option.selected');
+    currentHabitSettings.icon = selectedIcon ? selectedIcon.dataset.icon : 'fas fa-star';
+
+    saveData();
+    renderHabits();
+    closeHabitSettingsModal();
+}
+
 function openColorModal(habit) {
     currentColorEdit = habit;
 
@@ -441,7 +508,7 @@ function updateDayValue(delta) {
     document.getElementById('dayModalValue').textContent = newValue;
 
     saveData();
-    renderHabits();
+    renderHabits(); // This will update the day indicators
 }
 
 function renderHabit(habit) {
@@ -464,7 +531,9 @@ function renderHabit(habit) {
 
     const title = document.createElement('div');
     title.className = 'habit-title';
-    title.textContent = habit.name + (isMobile ? ' ▼' : '');
+    
+    const iconHtml = habit.icon ? `<i class="${habit.icon}"></i> ` : '';
+    title.innerHTML = iconHtml + habit.name + (isMobile ? ' ▼' : '');
 
     // Make title clickable for editing
     title.addEventListener('click', (e) => {
@@ -481,7 +550,7 @@ function renderHabit(habit) {
 
     const prevBtn = document.createElement('button');
     prevBtn.className = 'year-btn';
-    prevBtn.textContent = '←';
+    prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
 
     const yearText = document.createElement('div');
     yearText.className = 'year-text';
@@ -489,7 +558,7 @@ function renderHabit(habit) {
 
     const nextBtn = document.createElement('button');
     nextBtn.className = 'year-btn';
-    nextBtn.textContent = '→';
+    nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
 
     prevBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -509,17 +578,31 @@ function renderHabit(habit) {
     yearNav.appendChild(yearText);
     yearNav.appendChild(nextBtn);
 
-    // Color picker button
-    const colorBtn = document.createElement('button');
-    colorBtn.className = 'color-picker';
-    colorBtn.style.background = habit.color;
-    colorBtn.addEventListener('click', (e) => {
+    // Settings button
+    const settingsBtn = document.createElement('button');
+    settingsBtn.className = 'settings-btn';
+    settingsBtn.innerHTML = '<i class="fas fa-cog"></i>';
+    settingsBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        openColorModal(habit);
+        openHabitSettingsModal(habit);
     });
 
+    // Streak counter (only show if there's a streak)
+    const currentYear = habit.currentYear || new Date().getFullYear();
+    const streak = calculateCurrentStreak(habit.id, currentYear);
+    
+    if (streak > 0) {
+        const streakCounter = document.createElement('div');
+        streakCounter.className = 'streak-counter';
+        streakCounter.innerHTML = `
+            <i class="fas fa-fire"></i>
+            <span>${streak}</span>
+        `;
+        controls.appendChild(streakCounter);
+    }
+
     controls.appendChild(yearNav);
-    controls.appendChild(colorBtn);
+    controls.appendChild(settingsBtn);
     header.appendChild(title);
     header.appendChild(controls);
 
@@ -653,7 +736,7 @@ function openQuickAdd() {
             state.data[habit.id][dateKey] = newValue;
             valueSpan.textContent = newValue;
             saveData();
-            renderHabits();
+            renderHabits(); // Update day indicators
         });
 
         const valueSpan = document.createElement('div');
@@ -669,7 +752,7 @@ function openQuickAdd() {
             state.data[habit.id][dateKey] = newValue;
             valueSpan.textContent = newValue;
             saveData();
-            renderHabits();
+            renderHabits(); // Update day indicators
         });
 
         controls.appendChild(decrementBtn);
@@ -785,6 +868,22 @@ function init() {
 
     document.getElementById('quickAddModal').addEventListener('click', (e) => {
         if (e.target.id === 'quickAddModal') closeQuickAdd();
+    });
+
+    // Habit settings modal event listeners
+    document.getElementById('saveHabitSettings').addEventListener('click', saveHabitSettings);
+    document.getElementById('cancelHabitSettings').addEventListener('click', closeHabitSettingsModal);
+    
+    document.getElementById('habitSettingsModal').addEventListener('click', (e) => {
+        if (e.target.id === 'habitSettingsModal') closeHabitSettingsModal();
+    });
+
+    // Icon selector event listeners
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.icon-option')) {
+            document.querySelectorAll('.icon-option').forEach(option => option.classList.remove('selected'));
+            e.target.closest('.icon-option').classList.add('selected');
+        }
     });
 
     document.getElementById('setupModal').addEventListener('click', (e) => {

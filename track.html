@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Habit Tracker - Swiss Style</title>
-  
+  <title>Dashboard - Local Habit</title>
+
   <!-- Primary Meta Tags -->
-  <meta name="title" content="Habit Tracker - Swiss Style">
-  <meta name="description" content="A beautiful, minimalist habit tracker with GitHub-style contribution charts. Track your daily habits with a clean Swiss design aesthetic.">
-  <meta name="keywords" content="habit tracker, habits, productivity, swiss design, minimalist, github style, daily tracker">
+  <meta name="title" content="Local Habit">
+  <meta name="description"
+    content="A beautiful, minimalist habit tracker with GitHub-style contribution charts. Track your daily habits with a clean Swiss design aesthetic.">
+  <meta name="keywords"
+    content="habit tracker, habits, productivity, swiss design, minimalist, github style, daily tracker">
   <meta name="author" content="Your Name">
 
   <!-- Theme Color -->
@@ -17,38 +20,60 @@
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Habit Tracker">
-  <meta property="og:description" content="A beautiful, minimalist habit tracker with GitHub-style contribution charts. Track your daily habits with a clean Swiss design aesthetic.">
+  <meta property="og:description"
+    content="A beautiful, minimalist habit tracker with GitHub-style contribution charts. Track your daily habits with a clean Swiss design aesthetic.">
   <meta property="og:image" content="https://yourwebsite.com/og-image.png">
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://yourwebsite.com/">
   <meta property="twitter:title" content="Habit Tracker">
-  <meta property="twitter:description" content="A beautiful, minimalist habit tracker with GitHub-style contribution charts. Track your daily habits with a clean Swiss design aesthetic.">
+  <meta property="twitter:description"
+    content="A beautiful, minimalist habit tracker with GitHub-style contribution charts. Track your daily habits with a clean Swiss design aesthetic.">
   <meta property="twitter:image" content="https://yourwebsite.com/twitter-image.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 
   <!-- Manifest -->
-  <link rel="manifest" href="/site.webmanifest">
+  <link rel="manifest" href="images/site.webmanifest">
 
   <!-- Additional -->
   <meta name="robots" content="index, follow">
   <meta name="language" content="English">
   <meta name="revisit-after" content="7 days">
-  
+
   <!-- Stylesheets -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
   <div class="header">
-    <div class="greeting">
-     
-      <span id="greetingText"></span>, <span class="name" id="nameDisplay"></span>
-      <span id="itsText"></span><span id="dateDisplay"></span>
+    <div class="header-content">
+      <div class="header-left">
+        <img src="images/logo.jpg" alt="Logo" class="logo">
+        <div class="greeting">
+          <div class="greeting-line">
+            <span id="greetingText"></span>,
+          </div>
+          <div class="name-line">
+            <span class="name" id="nameDisplay"></span>
+          </div>
+          <span id="itsText"></span>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="date-container">
+          <div class="date-text">
+            <div id="dayOfWeek"></div>
+            <div id="dateDisplay"></div>
+          </div>
+          <!--<i class="fas fa-calendar-alt date-icon"></i>-->
+        </div>
+      </div>
     </div>
   </div>
 
@@ -58,8 +83,8 @@
 
   <button class="edit-habit-btn" id="editHabitBtn" title="Edit habits">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
     </svg>
   </button>
 
@@ -68,7 +93,7 @@
   <div id="setupModal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-title">Welcome! Let's set up your habits</div>
-      
+
       <div class="form-group">
         <label class="form-label">Your Name</label>
         <input type="text" class="form-input" id="setupName" placeholder="Enter your name">
@@ -114,6 +139,50 @@
     </div>
   </div>
 
+  <div id="habitSettingsModal" class="modal hidden">
+    <div class="modal-content habit-settings-modal">
+      <div class="modal-title">Habit Settings</div>
+
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <input type="text" class="form-input" id="habitSettingsName" placeholder="Habit name">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Icon</label>
+        <div class="icon-selector" id="iconSelector">
+          <div class="icon-option" data-icon="fas fa-star"><i class="fas fa-star"></i></div>
+          <div class="icon-option" data-icon="fas fa-dumbbell"><i class="fas fa-dumbbell"></i></div>
+          <div class="icon-option" data-icon="fas fa-book"><i class="fas fa-book"></i></div>
+          <div class="icon-option" data-icon="fas fa-heart"><i class="fas fa-heart"></i></div>
+          <div class="icon-option" data-icon="fas fa-brain"><i class="fas fa-brain"></i></div>
+          <div class="icon-option" data-icon="fas fa-pen"><i class="fas fa-pen"></i></div>
+          <div class="icon-option" data-icon="fas fa-music"><i class="fas fa-music"></i></div>
+          <div class="icon-option" data-icon="fas fa-utensils"><i class="fas fa-utensils"></i></div>
+          <div class="icon-option" data-icon="fas fa-bed"><i class="fas fa-bed"></i></div>
+          <div class="icon-option" data-icon="fas fa-walking"><i class="fas fa-walking"></i></div>
+          <div class="icon-option" data-icon="fas fa-glass-water"><i class="fas fa-glass-water"></i></div>
+          <div class="icon-option" data-icon="fas fa-code"><i class="fas fa-code"></i></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Color</label>
+        <input type="color" class="form-input color-input" id="habitSettingsColor">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Unit (optional)</label>
+        <input type="text" class="form-input" id="habitSettingsUnit" placeholder="e.g. pages, minutes, glasses">
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary btn-small" id="cancelHabitSettings">Cancel</button>
+        <button class="btn btn-small" id="saveHabitSettings">Save</button>
+      </div>
+    </div>
+  </div>
+
   <div id="quickAddModal" class="modal hidden">
     <div class="modal-content quick-add-modal">
       <div class="quick-add-title" id="quickAddTitle">Today's Progress</div>
@@ -124,7 +193,8 @@
     </div>
   </div>
 
-<script src="script.js"></script>
-  
+  <script src="script.js"></script>
+
 </body>
+
 </html>

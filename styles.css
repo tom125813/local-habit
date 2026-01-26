@@ -15,7 +15,7 @@ body {
 }
 
 strong {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 .header {
@@ -24,10 +24,97 @@ strong {
   background: #fff;
 }
 
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-right {
+  color: #666;
+  font-size: 0.9em;
+  font-weight: 100;
+}
+
+.date-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.date-icon {
+  font-size: 1.4em;
+  color: #666;
+}
+
+.date-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  text-align: right;
+}
+
+.date-text div {
+  margin: 0;
+}
+
+#dayOfWeek {
+  font-weight: 400;
+  font-size: 1em;
+}
+
+#dateDisplay {
+  font-weight: 100;
+  font-size: 0.9em;
+  color: #888;
+}
+
+@media (min-width: 768px) {
+  .header-right {
+    font-size: 1rem;
+  }
+  
+  .date-icon {
+    font-size: 1.6em;
+  }
+  
+  #dayOfWeek {
+    font-size: 1.1em;
+  }
+  
+  #dateDisplay {
+    font-size: 1em;
+  }
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
 .greeting {
   font-size: 1.25rem;
   font-weight: 300;
   letter-spacing: -0.02em;
+}
+
+.greeting-line {
+  line-height: 1.2;
+}
+
+.name-line {
+  line-height: 1.2;
+  margin-top: 0.2rem;
 }
 
 .local-habit-title {
@@ -45,11 +132,16 @@ strong {
   .header {
     padding: 2rem 2rem 1.5rem;
   }
-  
+
+  .logo {
+    width: 65px;
+    height: 65px;
+  }
+
   .greeting {
     font-size: 1.5rem;
   }
-  
+
   .local-habit-title {
     font-size: 1.6rem;
     margin-right: 1rem;
@@ -116,24 +208,19 @@ strong {
   display: flex;
   flex-direction: column;
   background: #fff;
-  box-shadow: 4px 4px 0 0 rgba(0,0,0,0.1);
+  box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.1);
   cursor: move;
   position: relative;
   user-select: none;
-  transition: all 0.2s ease;
 }
 
 .habit-card.dragging {
-  opacity: 0.7;
-  transform: rotate(3deg) scale(1.02);
-  z-index: 1000;
-  box-shadow: 8px 8px 20px rgba(0,0,0,0.2);
+  opacity: 0.5;
 }
 
 .habit-card.drag-over {
   border-color: #007acc;
   background: #f0f8ff;
-  transform: translateY(-2px);
 }
 
 @media (min-width: 768px) {
@@ -201,47 +288,143 @@ strong {
   flex-shrink: 0;
 }
 
-.color-picker {
-  width: 28px;
+.streak-counter {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ff6b35;
+  background: rgba(255, 107, 53, 0.1);
+  padding: 0 0.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 107, 53, 0.3);
+  white-space: nowrap;
   height: 28px;
-  border: 2px solid #000;
-  cursor: pointer;
-  background: none;
-  padding: 0;
-  flex-shrink: 0;
-  transition: transform 0.2s;
 }
 
-.color-picker:hover {
-  transform: scale(1.1);
+.streak-counter i {
+  flex-shrink: 0;
+  font-size: 0.8rem;
 }
 
 @media (min-width: 768px) {
-  .color-picker {
+  .streak-counter {
+    font-size: 1rem;
+    padding: 0 0.6rem;
+    height: 32px;
+  }
+
+  .streak-counter i {
+    font-size: 0.9rem;
+  }
+}
+
+.settings-btn {
+  width: 28px;
+  height: 28px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+}
+
+.settings-btn:hover {
+  background: #e0e0e0;
+  color: #000;
+}
+
+@media (min-width: 768px) {
+  .settings-btn {
     width: 32px;
     height: 32px;
   }
 }
 
+.habit-settings-modal {
+  max-width: 500px;
+  padding: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .habit-settings-modal {
+    padding: 2rem;
+  }
+}
+
+.icon-selector {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.icon-option {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #f9f9f9;
+  color: #666;
+}
+
+.icon-option:hover {
+  border-color: #999;
+  background: #f0f0f0;
+  color: #000;
+}
+
+.icon-option.selected {
+  border-color: #000;
+  background: #000;
+  color: #fff;
+}
+
+.color-input {
+  height: 52px;
+  padding: 0.25rem;
+  cursor: pointer;
+}
+
+.habit-title i {
+  margin-right: 0.5rem;
+  color: inherit;
+}
+
 .year-nav {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  background: #f5f5f5;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  overflow: hidden;
 }
 
 .year-btn {
-  background: #fff;
-  border: 2px solid #000;
+  background: transparent;
+  border: none;
   width: 28px;
   height: 28px;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
   flex-shrink: 0;
-  font-weight: 600;
+  color: #666;
   transition: all 0.2s;
 }
 
@@ -249,26 +432,29 @@ strong {
   .year-btn {
     width: 32px;
     height: 32px;
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 }
 
 .year-btn:hover {
-  background: #000;
-  color: #fff;
-  transform: scale(1.05);
+  background: #e0e0e0;
+  color: #000;
 }
 
 .year-text {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
   min-width: 50px;
   text-align: center;
+  padding: 0 0.5rem;
+  color: #333;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
 }
 
 @media (min-width: 768px) {
   .year-text {
-    font-size: 1rem;
+    font-size: 0.95rem;
     min-width: 55px;
   }
 }
@@ -336,6 +522,26 @@ strong {
   transition: all 0.15s ease;
 }
 
+.day.today {
+  border: 2px solid darkgray;
+  border-radius: 2px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px rgba(0, 0, 0, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
 @media (min-width: 768px) {
   .day {
     width: 15px;
@@ -365,7 +571,7 @@ strong {
   opacity: 0;
   transition: opacity 0.2s;
   font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   border-radius: 4px;
   max-width: 200px;
   text-align: center;
@@ -441,7 +647,7 @@ strong {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -457,7 +663,7 @@ strong {
   width: 100%;
   max-height: 85vh;
   overflow: auto;
-  box-shadow: 8px 8px 0 0 rgba(0,0,0,0.2);
+  box-shadow: 8px 8px 0 0 rgba(0, 0, 0, 0.2);
 }
 
 @media (min-width: 768px) {
@@ -500,7 +706,7 @@ strong {
 
 .form-input:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .habit-item {
@@ -532,7 +738,7 @@ strong {
 .btn:hover {
   background: #333;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .btn-secondary {
@@ -573,7 +779,7 @@ strong {
   align-items: center;
   justify-content: center;
   z-index: 100;
-  box-shadow: 4px 4px 0 0 rgba(0,0,0,0.2);
+  box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.2);
   transition: all 0.2s;
 }
 
@@ -590,7 +796,7 @@ strong {
 .edit-habit-btn:hover {
   background: #333;
   transform: translateY(-2px);
-  box-shadow: 6px 6px 0 0 rgba(0,0,0,0.3);
+  box-shadow: 6px 6px 0 0 rgba(0, 0, 0, 0.3);
 }
 
 .quick-add-btn {
@@ -608,7 +814,7 @@ strong {
   align-items: center;
   justify-content: center;
   z-index: 100;
-  box-shadow: 4px 4px 0 0 rgba(0,0,0,0.2);
+  box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.2);
   transition: all 0.2s;
 }
 
@@ -625,7 +831,7 @@ strong {
 .quick-add-btn:hover {
   background: #333;
   transform: translateY(-2px);
-  box-shadow: 6px 6px 0 0 rgba(0,0,0,0.3);
+  box-shadow: 6px 6px 0 0 rgba(0, 0, 0, 0.3);
 }
 
 .day-modal {
@@ -900,7 +1106,7 @@ strong {
   .habit-card {
     max-height: calc((100vh - 140px) / 2 - 0.75rem);
   }
-  
+
   .grid {
     grid-auto-rows: minmax(0, 1fr);
   }
@@ -931,7 +1137,7 @@ body {
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  
+
   .habit-card {
     width: 100%;
     min-width: 0;
