@@ -264,7 +264,8 @@ function interpolateColor(color, value, max) {
     const g = parseInt(color.slice(3, 5), 16);
     const b = parseInt(color.slice(5, 7), 16);
 
-    const ratio = 0.35+Math.min(0.75, value / max);
+    // originally was ratio = value / max but changed to have a min base ratio of 0.15 for better visibility
+    const ratio = 0.15+Math.min(0.85, value / max);
     const nr = Math.round(245 + (r - 245) * ratio);
     const ng = Math.round(245 + (g - 245) * ratio);
     const nb = Math.round(245 + (b - 245) * ratio);
@@ -605,6 +606,8 @@ function showSetupModal() {
     document.getElementById('setupModal').classList.remove('hidden');
 }
 
+var shifting = false;
+
 function openQuickAdd() {
     const today = new Date();
     const dateKey = dateToKey(today);
@@ -672,6 +675,20 @@ function openQuickAdd() {
     document.getElementById('quickAddModal').classList.remove('hidden');
 }
 
+document.addEventListener('keydown', (event)=> {
+    if (event.key == "Shift") {
+        shifting = true;
+    }
+});
+
+document.addEventListener('keyup', (event)=> {
+    if (event.key == "Shift") {
+        shifting = false;
+    }
+});
+
+
+
 function closeQuickAdd() {
     document.getElementById('quickAddModal').classList.add('hidden');
 }
@@ -734,8 +751,8 @@ function init() {
 
     document.getElementById('quickAddBtn').addEventListener('click', openQuickAdd);
 
-    document.getElementById('incrementBtn').addEventListener('click', () => updateDayValue(1));
-    document.getElementById('decrementBtn').addEventListener('click', () => updateDayValue(-1));
+    document.getElementById('incrementBtn').addEventListener('click', () => updateDayValue((shifting) ? 10 : 1));
+    document.getElementById('decrementBtn').addEventListener('click', () => updateDayValue((shifting) ? -10 : -1));
     document.getElementById('closeDayModal').addEventListener('click', closeDayModal);
 
     document.getElementById('dayModal').addEventListener('click', (e) => {
