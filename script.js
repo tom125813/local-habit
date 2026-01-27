@@ -68,11 +68,11 @@ function updateGreeting() { // added date to this too
     }
 
     const now = new Date();
-    
+
     document.getElementById('dayOfWeek').textContent = now.toLocaleDateString(undefined, {
         weekday: 'long'
     });
-    
+
     document.getElementById('dateDisplay').textContent = now.toLocaleDateString(undefined, {
         day: 'numeric',
         month: 'short',
@@ -110,30 +110,48 @@ function calculateCurrentStreak(habitId, year) {
     const habitData = state.data[habitId] || {};
     const today = new Date();
     const currentYear = today.getFullYear();
-    
+
     // Only calculate streak for current year
     if (year !== currentYear) {
-        return 0;
+        return { streak: 0, isActive: false };
     }
+
+    const todayKey = dateToKey(today);
+    const todayValue = habitData[todayKey] || 0;
+    
+    // Start from yesterday to check for existing streak
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
     
     let streak = 0;
-    let checkDate = new Date(today);
-    
-    // Count consecutive days backwards from today
+    let checkDate = new Date(yesterday);
+
+    // Count consecutive days backwards from yesterday
     while (checkDate.getFullYear() === currentYear) {
         const dateKey = dateToKey(checkDate);
         const value = habitData[dateKey] || 0;
-        
+
         if (value > 0) {
             streak++;
         } else {
             break;
         }
-        
+
         checkDate.setDate(checkDate.getDate() - 1);
     }
-    
-    return streak;
+
+    // If today is done, add 1 to the streak
+    if (todayValue > 0) {
+        streak++;
+        return { streak: streak, isActive: true };
+    }
+
+    // If there's a streak from yesterday but today isn't done, show inactive
+    if (streak > 0) {
+        return { streak: streak, isActive: false };
+    }
+
+    return { streak: 0, isActive: false };
 }
 
 function dateToKey(date) {
@@ -209,11 +227,11 @@ function makeHabitTitleEditable(habit, titleElement) {
         saveData();
         const newTitle = document.createElement('div');
         newTitle.className = 'habit-title';
-        
+
         // Preserve the icon when recreating the title
         const iconHtml = habit.icon ? `<i class="${habit.icon}"></i> ` : '';
         newTitle.innerHTML = iconHtml + habit.name;
-        
+
         newTitle.addEventListener('click', (e) => {
             e.stopPropagation();
             makeHabitTitleEditable(habit, newTitle);
@@ -285,7 +303,7 @@ function interpolateColor(color, value, max) {
     const b = parseInt(color.slice(5, 7), 16);
 
     // originally was ratio = value / max but changed to have a min base ratio of 0.15 for better visibility
-    const ratio =  0.15+Math.min(0.85, value / max);
+    const ratio = 0.15 + Math.min(0.85, value / max);
     //const ratio = value / max;
     const nr = Math.round(245 + (r - 245) * ratio);
     const ng = Math.round(245 + (g - 245) * ratio);
@@ -426,7 +444,7 @@ function openHabitSettingsModal(habit) {
     document.getElementById('habitSettingsName').value = habit.name || '';
     document.getElementById('habitSettingsColor').value = habit.color || '#FFB5E8';
     document.getElementById('habitSettingsUnit').value = habit.unit || '';
-    
+
     // Set current icon
     const currentIcon = habit.icon || 'fas fa-star';
     document.querySelectorAll('.icon-option').forEach(option => {
@@ -450,7 +468,7 @@ function saveHabitSettings() {
     currentHabitSettings.name = document.getElementById('habitSettingsName').value || 'Untitled Habit';
     currentHabitSettings.color = document.getElementById('habitSettingsColor').value;
     currentHabitSettings.unit = document.getElementById('habitSettingsUnit').value;
-    
+
     const selectedIcon = document.querySelector('.icon-option.selected');
     currentHabitSettings.icon = selectedIcon ? selectedIcon.dataset.icon : 'fas fa-star';
 
@@ -531,7 +549,7 @@ function renderHabit(habit) {
 
     const title = document.createElement('div');
     title.className = 'habit-title';
-    
+
     const iconHtml = habit.icon ? `<i class="${habit.icon}"></i> ` : '';
     title.innerHTML = iconHtml + habit.name + (isMobile ? ' ▼' : '');
 
@@ -587,16 +605,16 @@ function renderHabit(habit) {
         openHabitSettingsModal(habit);
     });
 
-    // Streak counter (only show if there's a streak)
+    // Streak counter (show if there's a streak or if there was a streak but today is incomplete)
     const currentYear = habit.currentYear || new Date().getFullYear();
-    const streak = calculateCurrentStreak(habit.id, currentYear);
-    
-    if (streak > 0) {
+    const streakData = calculateCurrentStreak(habit.id, currentYear);
+
+    if (streakData.streak > 0) {
         const streakCounter = document.createElement('div');
-        streakCounter.className = 'streak-counter';
+        streakCounter.className = `streak-counter ${streakData.isActive ? '' : 'streak-inactive'}`;
         streakCounter.innerHTML = `
             <i class="fas fa-fire"></i>
-            <span>${streak}</span>
+            <span>${streakData.streak}</span>
         `;
         controls.appendChild(streakCounter);
     }
@@ -767,13 +785,13 @@ function openQuickAdd() {
     document.getElementById('quickAddModal').classList.remove('hidden');
 }
 
-document.addEventListener('keydown', (event)=> {
+document.addEventListener('keydown', (event) => {
     if (event.key == "Shift") {
         shifting = true;
     }
 });
 
-document.addEventListener('keyup', (event)=> {
+document.addEventListener('keyup', (event) => {
     if (event.key == "Shift") {
         shifting = false;
     }
@@ -873,7 +891,7 @@ function init() {
     // Habit settings modal event listeners
     document.getElementById('saveHabitSettings').addEventListener('click', saveHabitSettings);
     document.getElementById('cancelHabitSettings').addEventListener('click', closeHabitSettingsModal);
-    
+
     document.getElementById('habitSettingsModal').addEventListener('click', (e) => {
         if (e.target.id === 'habitSettingsModal') closeHabitSettingsModal();
     });
