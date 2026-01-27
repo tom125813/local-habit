@@ -66,6 +66,9 @@
         </div>
       </div>
       <div class="header-right">
+        <button class="header-settings-btn" id="headerSettingsBtn" title="Settings">
+          <i class="fas fa-cog"></i>
+        </button>
         <div class="date-container">
           <div class="date-text">
             <div id="dayOfWeek"></div>
@@ -115,6 +118,7 @@
     <div class="modal-content day-modal">
       <div class="day-modal-title" id="dayModalTitle"></div>
       <div class="day-modal-value" id="dayModalValue">0</div>
+      <input type="number" class="day-modal-input hidden" id="dayModalInput" step="0.1" min="0">
       <div class="day-modal-controls">
         <button class="day-btn" id="decrementBtn">−</button>
         <button class="day-btn" id="incrementBtn">+</button>
@@ -189,6 +193,36 @@
       <div id="quickAddHabits"></div>
       <div class="modal-actions">
         <button class="btn btn-small" id="closeQuickAdd">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="appSettingsModal" class="modal hidden">
+    <div class="modal-content app-settings-modal">
+      <div class="modal-title">Settings</div>
+
+      <div class="form-group">
+        <label class="form-label">Display Options</label>
+        <div class="toggle-group">
+          <div class="toggle-item">
+            <label class="toggle-label">
+              <input type="checkbox" id="streakVisibilityToggle" class="toggle-checkbox">
+              <span class="toggle-slider"></span>
+              Show streak counters
+            </label>
+          </div>
+          <div class="toggle-item">
+            <label class="toggle-label">
+              <input type="checkbox" id="todayIndicatorToggle" class="toggle-checkbox">
+              <span class="toggle-slider"></span>
+              Show today indicator
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-small" id="closeAppSettings">Done</button>
       </div>
     </div>
   </div>

@@ -1,7 +1,11 @@
 const state = {
     name: '',
     habits: [],
-    data: {}
+    data: {},
+    settings: {
+        showStreaks: true,
+        showTodayIndicator: true
+    }
 };
 
 let currentDayEdit = null;
@@ -27,6 +31,11 @@ function loadData() {
         const data = localStorage.getItem('habit-data');
         if (data) state.data = JSON.parse(data);
 
+        const settings = localStorage.getItem('habit-settings');
+        if (settings) {
+            state.settings = { ...state.settings, ...JSON.parse(settings) };
+        }
+
         const setupComplete = localStorage.getItem('habit-setup-complete');
         isSetupComplete = setupComplete === 'true';
     } catch (e) {
@@ -39,6 +48,7 @@ function saveData() {
         localStorage.setItem('habit-name', state.name);
         localStorage.setItem('habit-list', JSON.stringify(state.habits));
         localStorage.setItem('habit-data', JSON.stringify(state.data));
+        localStorage.setItem('habit-settings', JSON.stringify(state.settings));
         localStorage.setItem('habit-setup-complete', 'true');
         isSetupComplete = true;
     } catch (e) {
@@ -377,7 +387,7 @@ function renderCalendar(habit, year, container) {
 
             const dayEl = document.createElement('div');
             dayEl.className = 'day';
-            if (isToday) {
+            if (isToday && state.settings.showTodayIndicator) {
                 dayEl.classList.add('today');
             }
             dayEl.style.background = color;
@@ -445,7 +455,55 @@ function openDayModal(habit, date) {
     document.getElementById('dayModalTitle').textContent =
         `${habit.name} - ${date.toLocaleDateString()}`;
     document.getElementById('dayModalValue').textContent = value;
+    document.getElementById('dayModalInput').value = value;
+    
+    // Show value, hide input
+    document.getElementById('dayModalValue').classList.remove('hidden');
+    document.getElementById('dayModalInput').classList.add('hidden');
+    
     document.getElementById('dayModal').classList.remove('hidden');
+}
+
+function makeValueEditable() {
+    const valueEl = document.getElementById('dayModalValue');
+    const inputEl = document.getElementById('dayModalInput');
+    
+    valueEl.classList.add('hidden');
+    inputEl.classList.remove('hidden');
+    inputEl.focus();
+    inputEl.select();
+}
+
+function finishValueEditing() {
+    const valueEl = document.getElementById('dayModalValue');
+    const inputEl = document.getElementById('dayModalInput');
+    
+    let newValue = parseFloat(inputEl.value);
+    
+    // Validation
+    if (isNaN(newValue) || newValue < 0) {
+        newValue = 0;
+    }
+    
+    // Round to 1 decimal place
+    newValue = Math.round(newValue * 10) / 10;
+    
+    // Update the data
+    if (currentDayEdit) {
+        const { habit, dateKey } = currentDayEdit;
+        if (!state.data[habit.id]) state.data[habit.id] = {};
+        state.data[habit.id][dateKey] = newValue;
+        saveData();
+        renderHabits();
+    }
+    
+    // Update display
+    valueEl.textContent = newValue;
+    inputEl.value = newValue;
+    
+    // Show value, hide input
+    inputEl.classList.add('hidden');
+    valueEl.classList.remove('hidden');
 }
 
 function closeDayModal() {
@@ -537,13 +595,20 @@ function updateDayValue(delta) {
     if (!state.data[habit.id]) state.data[habit.id] = {};
 
     const current = state.data[habit.id][dateKey] || 0;
-    const newValue = Math.max(0, current + delta);
+    let newValue = current + delta;
+    
+    // Ensure minimum of 0
+    newValue = Math.max(0, newValue);
+    
+    // Round to 1 decimal place
+    newValue = Math.round(newValue * 10) / 10;
 
     state.data[habit.id][dateKey] = newValue;
     document.getElementById('dayModalValue').textContent = newValue;
+    document.getElementById('dayModalInput').value = newValue;
 
     saveData();
-    renderHabits(); // This will update the day indicators
+    renderHabits();
 }
 
 function renderHabit(habit) {
@@ -626,7 +691,7 @@ function renderHabit(habit) {
     const currentYear = habit.currentYear || new Date().getFullYear();
     const streakData = calculateCurrentStreak(habit.id, currentYear);
 
-    if (streakData.streak > 0) {
+    if (streakData.streak > 0 && state.settings.showStreaks) {
         const streakCounter = document.createElement('div');
         streakCounter.className = `streak-counter ${streakData.isActive ? '' : 'streak-inactive'}`;
         streakCounter.innerHTML = `
@@ -765,33 +830,77 @@ function openQuickAdd() {
         const decrementBtn = document.createElement('button');
         decrementBtn.className = 'quick-add-btn-small';
         decrementBtn.textContent = '−';
-        decrementBtn.addEventListener('click', () => {
-            const current = state.data[habit.id][dateKey] || 0;
-            const newValue = Math.max(0, current - 1);
-            state.data[habit.id][dateKey] = newValue;
-            valueSpan.textContent = newValue;
-            saveData();
-            renderHabits(); // Update day indicators
-        });
 
         const valueSpan = document.createElement('div');
         valueSpan.className = 'quick-add-value';
         valueSpan.textContent = value;
+        valueSpan.style.cursor = 'pointer';
+
+        const valueInput = document.createElement('input');
+        valueInput.type = 'number';
+        valueInput.className = 'quick-add-input hidden';
+        valueInput.step = '0.1';
+        valueInput.min = '0';
+        valueInput.value = value;
 
         const incrementBtn = document.createElement('button');
         incrementBtn.className = 'quick-add-btn-small';
         incrementBtn.textContent = '+';
-        incrementBtn.addEventListener('click', () => {
-            const current = state.data[habit.id][dateKey] || 0;
-            const newValue = current + 1;
+
+        // Update value function
+        const updateValue = (newValue) => {
+            newValue = Math.max(0, Math.round(newValue * 10) / 10);
             state.data[habit.id][dateKey] = newValue;
             valueSpan.textContent = newValue;
+            valueInput.value = newValue;
             saveData();
-            renderHabits(); // Update day indicators
+            renderHabits();
+        };
+
+        decrementBtn.addEventListener('click', () => {
+            const current = state.data[habit.id][dateKey] || 0;
+            updateValue(current - 1);
+        });
+
+        incrementBtn.addEventListener('click', () => {
+            const current = state.data[habit.id][dateKey] || 0;
+            updateValue(current + 1);
+        });
+
+        // Make value clickable to edit
+        valueSpan.addEventListener('click', () => {
+            valueSpan.classList.add('hidden');
+            valueInput.classList.remove('hidden');
+            valueInput.focus();
+            valueInput.select();
+        });
+
+        // Handle input changes
+        const finishEditing = () => {
+            let newValue = parseFloat(valueInput.value);
+            if (isNaN(newValue) || newValue < 0) {
+                newValue = 0;
+            }
+            updateValue(newValue);
+            valueInput.classList.add('hidden');
+            valueSpan.classList.remove('hidden');
+        };
+
+        valueInput.addEventListener('blur', finishEditing);
+        valueInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                finishEditing();
+            }
+            if (e.key === 'Escape') {
+                valueInput.value = state.data[habit.id][dateKey] || 0;
+                valueInput.classList.add('hidden');
+                valueSpan.classList.remove('hidden');
+            }
         });
 
         controls.appendChild(decrementBtn);
         controls.appendChild(valueSpan);
+        controls.appendChild(valueInput);
         controls.appendChild(incrementBtn);
 
         item.appendChild(label);
@@ -818,6 +927,25 @@ document.addEventListener('keyup', (event) => {
 
 function closeQuickAdd() {
     document.getElementById('quickAddModal').classList.add('hidden');
+}
+
+function openAppSettings() {
+    // Set toggle states based on current settings
+    document.getElementById('streakVisibilityToggle').checked = state.settings.showStreaks;
+    document.getElementById('todayIndicatorToggle').checked = state.settings.showTodayIndicator;
+    
+    document.getElementById('appSettingsModal').classList.remove('hidden');
+}
+
+function closeAppSettings() {
+    // Save settings when closing
+    state.settings.showStreaks = document.getElementById('streakVisibilityToggle').checked;
+    state.settings.showTodayIndicator = document.getElementById('todayIndicatorToggle').checked;
+    
+    saveData();
+    renderHabits(); // Re-render to apply changes
+    
+    document.getElementById('appSettingsModal').classList.add('hidden');
 }
 
 function init() {
@@ -878,9 +1006,47 @@ function init() {
 
     document.getElementById('quickAddBtn').addEventListener('click', openQuickAdd);
 
+    document.getElementById('headerSettingsBtn').addEventListener('click', openAppSettings);
+    document.getElementById('closeAppSettings').addEventListener('click', closeAppSettings);
+
+    // Day modal value editing
+    document.getElementById('dayModalValue').addEventListener('click', makeValueEditable);
+    document.getElementById('dayModalInput').addEventListener('blur', finishValueEditing);
+    document.getElementById('dayModalInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            finishValueEditing();
+        }
+        if (e.key === 'Escape') {
+            const currentValue = currentDayEdit ? (state.data[currentDayEdit.habit.id] || {})[currentDayEdit.dateKey] || 0 : 0;
+            document.getElementById('dayModalInput').value = currentValue;
+            document.getElementById('dayModalInput').classList.add('hidden');
+            document.getElementById('dayModalValue').classList.remove('hidden');
+        }
+    });
+
     document.getElementById('incrementBtn').addEventListener('click', () => updateDayValue((shifting) ? 10 : 1));
     document.getElementById('decrementBtn').addEventListener('click', () => updateDayValue((shifting) ? -10 : -1));
     document.getElementById('closeDayModal').addEventListener('click', closeDayModal);
+
+    document.getElementById('confirmColor').addEventListener('click', closeColorModal);
+    document.getElementById('customColorInput').addEventListener('input', (e) => {
+        if (currentColorEdit) {
+            currentColorEdit.color = e.target.value;
+        }
+    });
+
+    document.getElementById('saveHabitSettings').addEventListener('click', saveHabitSettings);
+    document.getElementById('cancelHabitSettings').addEventListener('click', closeHabitSettingsModal);
+
+    // Icon selector event listeners
+    document.querySelectorAll('.icon-option').forEach(option => {
+        option.addEventListener('click', () => {
+            document.querySelectorAll('.icon-option').forEach(o => o.classList.remove('selected'));
+            option.classList.add('selected');
+        });
+    });
+
+    document.getElementById('closeQuickAdd').addEventListener('click', closeQuickAdd);
 
     document.getElementById('dayModal').addEventListener('click', (e) => {
         if (e.target.id === 'dayModal') closeDayModal();
@@ -899,18 +1065,18 @@ function init() {
         if (e.target.id === 'colorModal') closeColorModal();
     });
 
-    document.getElementById('closeQuickAdd').addEventListener('click', closeQuickAdd);
-
     document.getElementById('quickAddModal').addEventListener('click', (e) => {
         if (e.target.id === 'quickAddModal') closeQuickAdd();
     });
 
     // Habit settings modal event listeners
-    document.getElementById('saveHabitSettings').addEventListener('click', saveHabitSettings);
-    document.getElementById('cancelHabitSettings').addEventListener('click', closeHabitSettingsModal);
-
     document.getElementById('habitSettingsModal').addEventListener('click', (e) => {
         if (e.target.id === 'habitSettingsModal') closeHabitSettingsModal();
+    });
+
+    // App settings modal event listeners
+    document.getElementById('appSettingsModal').addEventListener('click', (e) => {
+        if (e.target.id === 'appSettingsModal') closeAppSettings();
     });
 
     // Icon selector event listeners
