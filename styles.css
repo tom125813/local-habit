@@ -6,8 +6,8 @@
 
 body {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  background: #fafafa;
-  color: #000;
+  background: #f8f9fa;
+  color: #2c3e50;
   min-height: 100vh;
   overflow-x: hidden;
   display: flex;
@@ -20,8 +20,9 @@ strong {
 
 .header {
   padding: 1.5rem;
-  border-bottom: 2px solid #000;
-  background: #fff;
+  border-bottom: 1px solid #e9ecef;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .header-content {
@@ -38,9 +39,9 @@ strong {
 }
 
 .header-right {
-  color: #666;
+  color: #6c757d;
   font-size: 0.9em;
-  font-weight: 100;
+  font-weight: 400;
 }
 
 .date-container {
@@ -52,7 +53,7 @@ strong {
 
 .date-icon {
   font-size: 1.4em;
-  color: #666;
+  color: #6c757d;
 }
 
 .date-text {
@@ -72,24 +73,24 @@ strong {
 }
 
 #dateDisplay {
-  font-weight: 100;
+  font-weight: 300;
   font-size: 0.9em;
-  color: #888;
+  color: #868e96;
 }
 
 @media (min-width: 768px) {
   .header-right {
     font-size: 1rem;
   }
-  
+
   .date-icon {
     font-size: 1.6em;
   }
-  
+
   #dayOfWeek {
     font-size: 1.1em;
   }
-  
+
   #dateDisplay {
     font-size: 1em;
   }
@@ -122,7 +123,7 @@ strong {
   font-style: italic;
   font-weight: 900;
   font-size: 1.6rem;
-  color: #000;
+  color: #2c3e50;
   letter-spacing: 0px;
   margin-right: 1rem;
   text-transform: uppercase;
@@ -155,14 +156,14 @@ strong {
 }
 
 .name:hover {
-  border-bottom-color: #000;
+  border-bottom-color: #495057;
 }
 
 .name-input {
   font-size: 1.25rem;
   font-weight: 500;
   border: none;
-  border-bottom: 2px solid #000;
+  border-bottom: 2px solid #495057;
   outline: none;
   font-family: inherit;
   padding: 0;
@@ -179,7 +180,7 @@ strong {
   flex: 1;
   overflow: auto;
   padding: 1.5rem;
-  background: #fafafa;
+  background: #f8f9fa;
 }
 
 @media (min-width: 768px) {
@@ -203,15 +204,17 @@ strong {
 }
 
 .habit-card {
-  border: 2px solid #000;
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  background: #fff;
-  box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   cursor: move;
   position: relative;
   user-select: none;
+  transition: all 0.2s ease;
 }
 
 .habit-card.dragging {
@@ -219,8 +222,9 @@ strong {
 }
 
 .habit-card.drag-over {
-  border-color: #007acc;
-  background: #f0f8ff;
+  border-color: #4dabf7;
+  background: #f8f9ff;
+  box-shadow: 0 6px 20px rgba(77, 171, 247, 0.15);
 }
 
 @media (min-width: 768px) {
@@ -255,12 +259,14 @@ strong {
   cursor: pointer;
   padding: 0.25rem;
   border: 2px solid transparent;
-  border-radius: 2px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
 }
 
 .habit-title:hover {
-  border-color: #ccc;
-  background: #f9f9f9;
+  border-color: #ced4da;
+  background: #f8f9fa;
+  border-radius: 6px;
 }
 
 .habit-title-input {
@@ -268,11 +274,11 @@ strong {
   font-weight: 600;
   letter-spacing: -0.02em;
   flex: 1;
-  border: 2px solid #000;
+  border: 2px solid #495057;
   padding: 0.25rem;
   font-family: inherit;
   background: #fff;
-  border-radius: 2px;
+  border-radius: 6px;
 }
 
 @media (min-width: 768px) {
@@ -294,19 +300,19 @@ strong {
   gap: 0.3rem;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #ff6b35;
-  background: rgba(255, 107, 53, 0.1);
+  color: #e8590c;
+  background: rgba(232, 89, 12, 0.08);
   padding: 0 0.5rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 107, 53, 0.3);
+  border-radius: 16px;
+  border: 1px solid rgba(232, 89, 12, 0.2);
   white-space: nowrap;
   height: 28px;
 }
 
 .streak-counter.streak-inactive {
-  color: #888;
-  background: rgba(136, 136, 136, 0.1);
-  border: 1px solid rgba(136, 136, 136, 0.3);
+  color: #6c757d;
+  background: rgba(108, 117, 125, 0.08);
+  border: 1px solid rgba(108, 117, 125, 0.2);
 }
 
 .streak-counter i {
@@ -329,22 +335,23 @@ strong {
 .settings-btn {
   width: 28px;
   height: 28px;
-  background: #f5f5f5;
-  border: 1px solid #ddd;
-  border-radius: 12px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666;
+  color: #6c757d;
 }
 
 .settings-btn:hover {
-  background: #e0e0e0;
-  color: #000;
+  background: #e9ecef;
+  color: #495057;
+  transform: translateY(-1px);
 }
 
 @media (min-width: 768px) {
@@ -375,26 +382,27 @@ strong {
 .icon-option {
   width: 40px;
   height: 40px;
-  border: 2px solid #ddd;
-  border-radius: 8px;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
-  background: #f9f9f9;
-  color: #666;
+  transition: all 0.2s ease;
+  background: #f8f9fa;
+  color: #6c757d;
 }
 
 .icon-option:hover {
-  border-color: #999;
-  background: #f0f0f0;
-  color: #000;
+  border-color: #adb5bd;
+  background: #e9ecef;
+  color: #495057;
+  transform: translateY(-1px);
 }
 
 .icon-option.selected {
-  border-color: #000;
-  background: #000;
+  border-color: #495057;
+  background: #495057;
   color: #fff;
 }
 
@@ -412,9 +420,9 @@ strong {
 .year-nav {
   display: flex;
   align-items: center;
-  background: #f5f5f5;
-  border-radius: 12px;
-  border: 1px solid #ddd;
+  background: #f8f9fa;
+  border-radius: 16px;
+  border: 1px solid #e9ecef;
   overflow: hidden;
 }
 
@@ -430,8 +438,8 @@ strong {
   justify-content: center;
   padding: 0;
   flex-shrink: 0;
-  color: #666;
-  transition: all 0.2s;
+  color: #6c757d;
+  transition: all 0.2s ease;
 }
 
 @media (min-width: 768px) {
@@ -443,8 +451,8 @@ strong {
 }
 
 .year-btn:hover {
-  background: #e0e0e0;
-  color: #000;
+  background: #e9ecef;
+  color: #495057;
 }
 
 .year-text {
@@ -453,9 +461,9 @@ strong {
   min-width: 50px;
   text-align: center;
   padding: 0 0.5rem;
-  color: #333;
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
+  color: #495057;
+  border-left: 1px solid #e9ecef;
+  border-right: 1px solid #e9ecef;
 }
 
 @media (min-width: 768px) {
@@ -509,7 +517,7 @@ strong {
   position: absolute;
   top: 0;
   font-weight: 600;
-  color: #333;
+  color: #495057;
 }
 
 @media (min-width: 768px) {
@@ -521,30 +529,33 @@ strong {
 .day {
   width: 14px;
   height: 14px;
-  border: 1px solid #d1d5db;
+  border: 1px solid #ced4dab7;
+  border-radius: 3px;
   cursor: pointer;
-  background: #f5f5f5;
+  background: #ffffff;
   position: relative;
   transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .day.today {
-  border: 2px solid darkgray;
-  border-radius: 2px;
-  animation: pulse 2s infinite;
+  border: 1px solid #4dabf796;
+  border-radius: 4px;
+  box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
+  animation: todayPulse 3s infinite;
 }
 
-@keyframes pulse {
+@keyframes todayPulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 0 1px rgba(77, 171, 247, 0.2);
   }
 
-  70% {
-    box-shadow: 0 0 0 6px rgba(0, 0, 0, 0);
+  50% {
+    box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.4);
   }
 
   100% {
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    box-shadow: 0 0 0 1px rgba(77, 171, 247, 0.2);
   }
 }
 
@@ -556,15 +567,17 @@ strong {
 }
 
 .day:hover {
-  border-color: #000;
+  border-color: #495057;
   border-width: 2px;
-  transform: scale(1.2);
+  transform: scale(1.15);
   z-index: 10;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 .day-tooltip {
   position: absolute;
-  background: #000;
+  background: #495057;
   color: #fff;
   padding: 0.4rem 0.7rem;
   font-size: 0.7rem;
@@ -575,10 +588,10 @@ strong {
   left: 50%;
   transform: translateX(-50%);
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s ease;
   font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
   max-width: 200px;
   text-align: center;
   min-width: max-content;
@@ -591,7 +604,7 @@ strong {
   left: 50%;
   transform: translateX(-50%);
   border: 5px solid transparent;
-  border-top-color: #000;
+  border-top-color: #495057;
   z-index: 20000;
 }
 
@@ -609,7 +622,7 @@ strong {
   top: auto;
   bottom: 100%;
   border-top-color: transparent;
-  border-bottom-color: #000;
+  border-bottom-color: #495057;
 }
 
 /* Tooltip left positioning */
@@ -653,23 +666,25 @@ strong {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 1rem;
+  backdrop-filter: blur(4px);
 }
 
 .modal-content {
   background: #fff;
-  border: 3px solid #000;
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
   padding: 1.5rem;
   max-width: 500px;
   width: 100%;
   max-height: 85vh;
   overflow: auto;
-  box-shadow: 8px 8px 0 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
 @media (min-width: 768px) {
@@ -705,21 +720,25 @@ strong {
 .form-input {
   width: 100%;
   padding: 0.65rem;
-  border: 2px solid #000;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
   font-family: inherit;
   font-size: 1rem;
+  transition: all 0.2s ease;
 }
 
 .form-input:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  border-color: #4dabf7;
+  box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.1);
 }
 
 .habit-item {
-  border: 2px solid #000;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
-  background: #fafafa;
+  background: #f8f9fa;
 }
 
 .habit-item-header {
@@ -730,32 +749,34 @@ strong {
 }
 
 .btn {
-  background: #000;
+  background: #495057;
   color: #fff;
   border: none;
+  border-radius: 8px;
   padding: 0.75rem 1.5rem;
   cursor: pointer;
   font-family: inherit;
   font-size: 1rem;
   font-weight: 600;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .btn:hover {
-  background: #333;
+  background: #343a40;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-secondary {
   background: #fff;
-  color: #000;
-  border: 2px solid #000;
+  color: #495057;
+  border: 2px solid #e9ecef;
 }
 
 .btn-secondary:hover {
-  background: #000;
+  background: #495057;
   color: #fff;
+  border-color: #495057;
 }
 
 .btn-small {
@@ -776,17 +797,18 @@ strong {
   right: 1.5rem;
   width: 52px;
   height: 52px;
-  background: #000;
+  background: #495057;
   color: #fff;
-  border: 2px solid #000;
+  border: none;
+  border-radius: 16px;
   font-size: 1.25rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 100;
-  box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.2);
-  transition: all 0.2s;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
 }
 
 @media (min-width: 768px) {
@@ -800,9 +822,9 @@ strong {
 }
 
 .edit-habit-btn:hover {
-  background: #333;
+  background: #343a40;
   transform: translateY(-2px);
-  box-shadow: 6px 6px 0 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
 }
 
 .quick-add-btn {
@@ -811,17 +833,18 @@ strong {
   right: 1.5rem;
   width: 52px;
   height: 52px;
-  background: #000;
+  background: #495057;
   color: #fff;
-  border: 2px solid #000;
+  border: none;
+  border-radius: 16px;
   font-size: 2rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 100;
-  box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.2);
-  transition: all 0.2s;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
 }
 
 @media (min-width: 768px) {
@@ -835,9 +858,9 @@ strong {
 }
 
 .quick-add-btn:hover {
-  background: #333;
+  background: #343a40;
   transform: translateY(-2px);
-  box-shadow: 6px 6px 0 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
 }
 
 .day-modal {
@@ -873,20 +896,21 @@ strong {
 .day-btn {
   width: 52px;
   height: 52px;
-  background: #000;
+  background: #495057;
   color: #fff;
-  border: 2px solid #000;
+  border: none;
+  border-radius: 12px;
   font-size: 1.75rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .day-btn:hover {
-  background: #333;
+  background: #343a40;
   transform: scale(1.05);
 }
 
@@ -928,23 +952,24 @@ strong {
   width: 100%;
   aspect-ratio: 1;
   border: 3px solid transparent;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .color-swatch:hover {
-  border-color: #000;
+  border-color: #495057;
   transform: scale(1.1);
 }
 
 .color-swatch.selected {
-  border-color: #000;
+  border-color: #495057;
   border-width: 4px;
   transform: scale(1.05);
 }
 
 .custom-color-section {
-  border-top: 2px solid #000;
+  border-top: 2px solid #e9ecef;
   padding-top: 1.5rem;
 }
 
@@ -958,7 +983,8 @@ strong {
 .custom-color-picker {
   width: 100%;
   height: 52px;
-  border: 2px solid #000;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
   cursor: pointer;
 }
 
@@ -991,7 +1017,7 @@ strong {
   gap: 1rem;
   margin-bottom: 1.25rem;
   padding-bottom: 1.25rem;
-  border-bottom: 2px solid #e5e5e5;
+  border-bottom: 2px solid #f1f3f4;
 }
 
 .quick-add-item:last-child {
@@ -1022,20 +1048,21 @@ strong {
 .quick-add-btn-small {
   width: 40px;
   height: 40px;
-  background: #000;
+  background: #495057;
   color: #fff;
-  border: 2px solid #000;
+  border: none;
+  border-radius: 10px;
   font-size: 1.5rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .quick-add-btn-small:hover {
-  background: #333;
+  background: #343a40;
   transform: scale(1.05);
 }
 

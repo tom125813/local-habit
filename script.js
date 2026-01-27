@@ -78,6 +78,23 @@ function updateGreeting() { // added date to this too
         month: 'short',
         year: 'numeric'
     });
+
+    // Update today indicators by checking if the day has changed
+    updateTodayIndicators();
+}
+
+// Track the last known date to detect day changes
+let lastKnownDate = dateToKey(new Date());
+
+function updateTodayIndicators() {
+    const today = new Date();
+    const todayKey = dateToKey(today);
+    
+    // If the date has changed since last check, re-render habits to update today indicators
+    if (todayKey !== lastKnownDate) {
+        lastKnownDate = todayKey;
+        renderHabits(); // This will update all today indicators and streaks
+    }
 }
 
 function makeNameEditable() {
